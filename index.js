@@ -1,50 +1,20 @@
-// Node.js version check
-if (typeof process !== 'undefined' && !process.browser && process.platform !== 'browser') {
-  const major = parseInt(process.versions.node.split('.')[0]);
-  if (major < 22) {
-    console.error('Your Node version is currently', process.versions.node);
-    console.error('Please update it to a version >= 22.x.x from https://nodejs.org/');
-    process.exit(1);
-  }
+if (typeof process !== 'undefined' && !process.browser && process.platform !== 'browser' && parseInt(process.versions.node.split('.')[0]) < 18) {
+  console.error('Your node version is currently', process.versions.node)
+  console.error('Please update it to a version >= 22.x.x from https://nodejs.org/')
+  process.exit(1)
 }
 
-const mineflayer = require('mineflayer');
+module.exports = require('./lib/loader.js')
+const mineflayer = require('mineflayer')
 
-// Create the bot
 const bot = mineflayer.createBot({
-  host: 'TuskulenuSMP.aternos.me', // Your server address
-  port: 41334,                     // Your server port
-  username: 'TuskulenuBOT'         // Bot username
-});
+  host: 'TuskulenuSMP.aternos.me',
+  port: 41334,
+  username: 'TuskulenuBOT'
+})
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Event handlers
-bot.on('login', () => {
-  console.log('✅ Bot has logged in!');
-});
-
-bot.on('spawn', () => {
-  console.log('🌱 Bot has spawned into the world!');
-});
-
-bot.on('error', err => {
-  console.error('❌ Bot error:', err);
-});
-
-bot.on('end', () => {
-  console.log('🔄 Bot disconnected, attempting to reconnect...');
-  // Optional: Auto-reconnect after 5 seconds
-  setTimeout(() => {
-    bot = mineflayer.createBot({
-      host: 'TuskulenuSMP.aternos.me',
-      port: 41334,
-      username: 'TuskulenuBOT'
-    });
-  }, 5000);
-});
-
-// If you need loader.js, require it after bot creation
-try {
-  require('./lib/loader.js');
-} catch (err) {
-  console.warn('⚠️ loader.js not found, skipping...');
-}
+app.get("/", (req, res) => res.send("Bot is running!"));
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
